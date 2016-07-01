@@ -73,7 +73,7 @@ public class Testbed {
         //At this point all the SMAS are available
 		
 		//Generates the 300 VMAs
-		myWorkload=new WorkloadGenerator("127.0.0.0",1);
+		myWorkload=new WorkloadGenerator(0,"127.0.0.0",1);
 		/**
 		 * During this execution, every time a new VMAs enter the simulation, the FA should designates a host SMA
 		 * */
