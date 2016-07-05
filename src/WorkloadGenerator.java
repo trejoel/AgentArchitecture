@@ -7,9 +7,10 @@ public class WorkloadGenerator extends Thread {
 
 	//This class will be the Testbed
 	//Added from the testbed class
-	private SMA[] SMA_low=new SMA[6];
-	private SMA[] SMA_medium=new SMA[8];
-	private SMA[] SMA_high=new SMA[6];
+	private SMA[] mySMA=new SMA[20];
+	//private SMA[] SMA_low=new SMA[6];
+	//private SMA[] SMA_medium=new SMA[8];
+	//private SMA[] SMA_high=new SMA[6];
 	private FA front_agent=new FA();	
 	private int startTime;
 	//Added from the testbed class
@@ -60,25 +61,25 @@ public class WorkloadGenerator extends Thread {
 		
 		//While created, the SMA are added to the FA
 		
-		//There exists 6 hosts with 20 CORES and 48 GB.
+		//There exists 6 hosts with 20 CORES and 48 GB. (low)
 		
 		for (int i=0;i<6;i++){
-			SMA_low[i]=new SMA(i, 20, 48);
+			mySMA[i]=new SMA(i, 20, 48);
 			front_agent.subscribeSMA(i);
 			//SMAS.put(i, SMA_low[i]);
 		}
 		
-		//There exists 8 hosts with 40 CORES and 96 GB.
+		//There exists 8 hosts with 40 CORES and 96 GB. (medium)
 		
 		for (int i=0;i<8;i++){
-			SMA_medium[i]=new SMA(i+6, 40, 96);
+			mySMA[i]=new SMA(i+6, 40, 96);
 			front_agent.subscribeSMA(i+6);
 			//SMAS.put(i+6, SMA_low[i]);
 		}
 		
-		//There exists 6 hosts with 60 CORES and 144 GB.
+		//There exists 6 hosts with 60 CORES and 144 GB. (high)
 		for (int i=0;i<6;i++){
-			SMA_high[i]=new SMA(i+14, 60, 144);
+			mySMA[i]=new SMA(i+14, 60, 144);
 			front_agent.subscribeSMA(i+14);
 			//SMAS.put(i+14, SMA_low[i]);
 		}
@@ -159,6 +160,12 @@ public class WorkloadGenerator extends Thread {
 		  delay=xstart_time-old_start_time;
 		  Thread.sleep(delay);
 		  virtual_machine[i]=new VMA(i, xCPU_Avaible, xMEM_Avaible, (float)xstart_time, (float)xexecution_time);
+		  //Only for testing we assign the first VM
+		  if (i==0){
+			  this.roundRobin(virtual_machine[i],0);
+		  }
+		//Only for testing we assign the first VM
+		  
 		  //Here we need to subscribe the VMA to the FA. Review if the listVMA is better to be a VMA object
 		  //virtual_machine[i].printNew();
 	}	
@@ -167,6 +174,15 @@ public class WorkloadGenerator extends Thread {
      }
 		
     }
+    
+    
+   protected int roundRobin(VMA xVMA, int idSMA){
+	   int xSMA=idSMA;
+	   if (mySMA[idSMA].acceptVMA(Strategy.RoundRobin, xVMA)){
+		     
+	   }
+	   return xSMA;
+   }
     
 	public static void main(String args[]){						
 		WorkloadGenerator Simulation=new WorkloadGenerator(0,"127.0.0.0",1);

@@ -92,17 +92,55 @@ public class SMA {
     	this.is_leader=ldr;
     }
     
-    public boolean acceptVMA(){
+    public boolean acceptVMA(Strategy xStrategy, VMA xVMA){
+    	/**4th Jule 2016*/
     	// This function determines if the SMA can accept a new Virtual Machine
-    	
-    	return true;
+    	//First the function determine if there exists enough capacity to receive the required SMA
+    	boolean able;    	
+    	int requiredCPU=xVMA.get_CPU_avaible();
+    	int requiredMEM=xVMA.get_MEM_avaible();
+    	// We need to consider all the possible memory and CPU shall be used by xVMA, despide it only will use a fraction of it
+    	if ((requiredCPU+this.CPU_used)>this.getAvaibleCPU() || (requiredMEM+this.MEM_used)>this.getAvaibleMEM()){
+    		able=false;
+    	}
+    	else{
+    		switch (xStrategy) {
+    		 case RoundRobin: able=true;
+    		                 break;
+    		   default: able=true;
+    		            break;
+    		}
+    	}
+    	return able;
     }
     
-    public void receiveVMA(VMA x){
-    	//This function communicates via Socket with a SMA if the current SMA accept a VMA    	
-    	vMachine.add(x);    
+    public int computeNewValueCPU(int requiredCPU){
+           	int xCPU=0;
+           	xCPU=this.CPU_used+requiredCPU;
+           	return xCPU;
+    }
+
+    public int computeNewValueMEM(int requiredMEM){
+       	int xMEM=0;
+       	xMEM=this.MEM_used+requiredMEM;
+       	return xMEM;
+}    
+    
+    public void receiveVMA(VMA xVMA){
+    	//Now it receives only a reference to the VMA, later we need to assign it phisically
+    	//4th Jule 2016, modified by Joel
+    	int newCPU;
+    	int newMEM;    	
+    	//This function communicates via Socket with a SMA if the current SMA accept a VMA
+        newCPU=this.computeNewValueCPU(xVMA.getCPU_usage());
+        newMEM=this.computeNewValueMEM(xVMA.getMEM_usage());  
+        //allocates the CPU(0) and MEM(1)
+        this.updateResource(0, newCPU);
+        this.updateResource(1, newMEM);
+        //allocates the CPU(0) and MEM(1)    	
+    	vMachine.add(xVMA);    
     	//Add the trace to the VMA added by Joel 06-January-2016
-    	x.addSMA(this.getID());
+    	xVMA.addSMA(this.getID());
     	//Add the trace to the VMA added by Joel 06-January-2016
     }
     
@@ -131,7 +169,7 @@ public class SMA {
     // 1 MEM, 0 CPU
 
     
-    // This code should be assigned to a thread in order to surveillance the performance of the SMA
+    // This code should be assigned to a thread in order to monitor the performance of the SMA
     public void computeResouceUsed(int typeResource){
     	int len=vMachine.size();
     	int i;
