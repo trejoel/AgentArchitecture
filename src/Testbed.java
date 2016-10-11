@@ -7,9 +7,9 @@ public class Testbed extends Thread {
 	private int simulationRun=0;
     private String dataCenterIP;	
 	
-	private SMA[] SMA_low=new SMA[6];
-	private SMA[] SMA_medium=new SMA[8];
-	private SMA[] SMA_high=new SMA[6];
+	private SMA[] SMA=new SMA[20];  // from 0 to 5 is a low SMA, from 6 to 13 is a medium SMA, from 14 to 19 is high
+	//private SMA[] SMA_medium=new SMA[8];
+	//private SMA[] SMA_high=new SMA[6];
 	private VMA[] virtual_machine=new VMA[300];
 	private FA front_agent=new FA();
 	private WorkloadGenerator myWorkload;
@@ -42,23 +42,26 @@ public class Testbed extends Thread {
 		//There exists 6 hosts with 20 CORES and 48 GB.
 		
 		for (int i=0;i<6;i++){
-			SMA_low[i]=new SMA(i, 20, 48);
-			front_agent.subscribeSMA(i);
+			SMA[i]=new SMA(i, 20, 48);
+			//front_agent.subscribeSMA(i);
+			front_agent.subscribeSMA(SMA[i]);
 			//SMAS.put(i, SMA_low[i]);
 		}
 		
 		//There exists 8 hosts with 40 CORES and 96 GB.
 		
-		for (int i=0;i<8;i++){
-			SMA_medium[i]=new SMA(i+6, 40, 96);
-			front_agent.subscribeSMA(i+6);
+		for (int i=6;i<14;i++){  
+			SMA[i]=new SMA(i, 40, 96);
+			//front_agent.subscribeSMA(i+6);
+			front_agent.subscribeSMA(SMA[i]);
 			//SMAS.put(i+6, SMA_low[i]);
 		}
 		
 		//There exists 6 hosts with 60 CORES and 144 GB.
-		for (int i=0;i<6;i++){
-			SMA_high[i]=new SMA(i+14, 60, 144);
-			front_agent.subscribeSMA(i+14);
+		for (int i=14;i<20;i++){
+			SMA[i]=new SMA(i, 60, 144);
+			//front_agent.subscribeSMA(i+14);
+			front_agent.subscribeSMA(SMA[i]);
 			//SMAS.put(i+14, SMA_low[i]);
 		}
 		this.run();
@@ -99,7 +102,7 @@ public class Testbed extends Thread {
 		  Thread.sleep(delay);
 		  virtual_machine[i]=new VMA(i, xCPU_Avaible, xMEM_Avaible, (float)xstart_time, (float)xexecution_time);
 		  //Here we need to subscribe the VMA to the FA. Review if the listVMA is better to be a VMA object
-		  //virtual_machine[i].printVMA();
+		  virtual_machine[i].printVMA();
 	}	
 	}catch (Exception ex){
         System.out.println(ex);
