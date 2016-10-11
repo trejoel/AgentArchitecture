@@ -22,6 +22,10 @@ public class VMA {
 	private float starting_time;
 	private float execution_time; //ending_time is just computing ending_time=starting_time+execution_time
 	private float ending_time;
+	private int currentSMA; //Set the identifier of the current SMA
+	
+	
+	//To define a 
 	
 	//This structure give me a trace of the VMA. The SMAS that hosted it.  06-January-2016 
 	ArrayList<Integer> hostSMA;
@@ -45,6 +49,7 @@ public class VMA {
 		//Added by Joel 06-January-2016 
         hostSMA=new ArrayList<Integer>();
 		//Added by Joel 06-January-2016 		
+        this.currentSMA=0; //By default it is 0, it means it does not have SMA October 2016
 	}
 	
 	//getters
@@ -177,7 +182,7 @@ public class VMA {
 		return relMem; 		
 	}	
 	
-	public void printNew(){
+	public void printVMA(){
 		System.out.println("Virtual Machine: "+this.getId()+" Num CORES: "+this.get_CPU_avaible()+" MEM: "+this.get_MEM_avaible()+" Arrival: "+this.get_starting_time()+" End time: "+this.getEndingTime());		
 	}
 	
@@ -195,6 +200,11 @@ public class VMA {
 		}
 	}
 	
+	public int getCurrentSMA(){
+		return this.currentSMA;
+	}
 	
-
+	public void setCurrentSMA(int xSMA){
+		this.currentSMA=xSMA;
+	}
 }
